@@ -1,0 +1,165 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Angry King Alert 💗</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;min-height:100vh;display:grid;place-items:center;
+ padding:18px;font-family:system-ui,sans-serif;color:#492638;
+ background:linear-gradient(135deg,#fff0f5,#ffd8e8);
+}
+.card{
+ width:min(100%,430px);padding:28px 22px;text-align:center;
+ background:#ffffffdf;border-radius:28px;
+ box-shadow:0 18px 55px #b8427020;
+}
+.emoji{font-size:80px;margin:15px}
+h1{font-size:29px;line-height:1.2}
+p{color:#806273;line-height:1.5}
+button{
+ width:100%;padding:15px;border:0;border-radius:30px;
+ background:linear-gradient(135deg,#ff7da8,#e84378);
+ color:white;font-weight:800;font-size:15px;
+ cursor:pointer;margin-top:12px;
+}
+.secondary{background:#fff0f5;color:#c83c70}
+.hidden{display:none}
+.choices{display:grid;gap:10px;margin:20px 0;text-align:left}
+.choice{
+ padding:14px;border:1.5px solid #f5c7d8;
+ border-radius:15px;background:#fff9fb;
+}
+.choice input{accent-color:#e84378}
+.preview{
+ width:100%;max-height:240px;object-fit:cover;
+ border-radius:18px;margin-top:15px;
+}
+.small{font-size:12px}
+</style>
+</head>
+<body>
+<main class="card">
+
+<section id="intro">
+ <div class="emoji">😠</div>
+ <h1>Your King Is VERY Angry With You!</h1>
+ <p>There is only one way to destroy this dangerous level of anger… 👀</p>
+ <button onclick="show('naughty')">DESTROY HIS ANGER 💣</button>
+</section>
+
+<section id="naughty" class="hidden">
+ <div class="emoji">😏💗</div>
+ <h1>Hmm… You Found The Secret!</h1>
+ <p>Choose your mission to make your King smile again 🫶</p>
+
+ <div class="choices">
+  <label class="choice">
+   <input type="checkbox" value="Simple selfie">
+   📸 Simple selfie
+  </label>
+  <label class="choice">
+   <input type="checkbox" value="Full selfie">
+   ✨ Full selfie
+  </label>
+  <label class="choice">
+   <input type="checkbox" value="Hair selfie">
+   💇‍♀️ Hair selfie
+  </label>
+ </div>
+
+ <button onclick="choosePhoto()">CHOOSE MY PHOTO 💌</button>
+ <input type="file" id="photo" accept="image/*" capture="user" hidden>
+ <img id="preview" class="preview hidden">
+
+ <button id="send" class="hidden" onclick="sendWhatsApp()">
+  SEND TO KING ON WHATSAPP 💚
+ </button>
+
+ <p class="small">
+  Photo stays on your device until you choose to share it.
+ </p>
+ <button class="secondary" onclick="show('done')">
+  Okay King… forgive me? 🥺
+ </button>
+</section>
+
+<section id="done" class="hidden">
+ <div class="emoji">🥹💞</div>
+ <h1>ANGER DESTROYED!</h1>
+ <p>King is smiling now. Come here, you little troublemaker 🤍</p>
+ <button onclick="location.reload()">HUG HIM AGAIN 🤗</button>
+</section>
+
+</main>
+
+<script>
+const WHATSAPP = "8801742489763";
+
+function show(id){
+ ["intro","naughty","done"].forEach(x=>{
+  document.getElementById(x).classList.toggle("hidden",x!==id);
+ });
+}
+
+function choosePhoto(){
+ const selected=document.querySelectorAll(
+  '.choices input:checked'
+ );
+ if(!selected.length){
+  alert("Choose at least one cute mission first 😌");
+  return;
+ }
+ document.getElementById("photo").click();
+}
+
+let photoURL=null;
+
+document.getElementById("photo").addEventListener("change",e=>{
+ const file=e.target.files[0];
+ if(!file)return;
+
+ if(photoURL)URL.revokeObjectURL(photoURL);
+ photoURL=URL.createObjectURL(file);
+
+ const preview=document.getElementById("preview");
+ preview.src=photoURL;
+ preview.classList.remove("hidden");
+ document.getElementById("send").classList.remove("hidden");
+});
+
+function sendWhatsApp(){
+ const selected=[...document.querySelectorAll(
+  '.choices input:checked'
+ )].map(x=>x.value);
+
+ const message=
+  "King, I completed my cute mission! 💗\n"+
+  "Selected: "+selected.join(", ")+
+  "\nHere is my photo 🥰";
+
+ const file=document.getElementById("photo").files[0];
+
+ if(file){
+  const a=document.createElement("a");
+  a.href=photoURL;
+  a.download=file.name;
+  a.click();
+ }
+
+ window.open(
+  "https://wa.me/"+WHATSAPP+
+  "?text="+encodeURIComponent(message),
+  "_blank"
+ );
+
+ alert(
+  "Photo downloaded! Attach it in WhatsApp and press Send 💚"
+ );
+}
+</script>
+</body>
+</html>
